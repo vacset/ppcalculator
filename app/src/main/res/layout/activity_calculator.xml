@@ -1,11 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CalculatorActivity">
 
     <TextView
-        android:id="@+id/txtScreen"
+        android:id="@+id/txtFormula"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -17,11 +18,25 @@
         android:textSize="30sp"
         android:typeface="serif" />
 
+    <TextView
+        android:id="@+id/txtResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/txtFormula"
+        android:gravity="end|center_vertical"
+        android:maxLength="16"
+        android:padding="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="40sp"
+        android:typeface="serif" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/txtScreen"
-        android:orientation="vertical">
+        android:layout_below="@+id/txtResult"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,9 +75,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/button"
+                android:background="@drawable/button_operator"
                 android:text="/"
                 android:textSize="30sp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -102,7 +118,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/button"
+                android:background="@drawable/button_operator"
                 android:text="*"
                 android:textSize="30sp" />
         </LinearLayout>
@@ -144,7 +160,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/button"
+                android:background="@drawable/button_operator"
                 android:text="-"
                 android:textSize="30sp" />
         </LinearLayout>
@@ -186,19 +202,37 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/button"
+                android:background="@drawable/button_operator"
                 android:text="+"
                 android:textSize="30sp" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnEqual"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/button"
-            android:text="="
-            android:textSize="30sp" />
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/btnQr"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="@drawable/button_operator"
+                android:src="@drawable/icon_qr"
+                android:text="QR"
+                android:textSize="30sp" />
+
+            <Button
+                android:id="@+id/btnEqual"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button_operator"
+                android:text="="
+                android:textSize="30sp" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>
