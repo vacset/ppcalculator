@@ -76,7 +76,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/button_operator"
-                android:text="/"
+                android:text="\u00F7"
                 android:textSize="30sp" />
 
         </LinearLayout>
@@ -119,7 +119,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/button_operator"
-                android:text="*"
+                android:text="\u00D7"
                 android:textSize="30sp" />
         </LinearLayout>
 
