@@ -1,10 +1,13 @@
 package seta.noip.me.ppcalculator;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.view.View;
 
@@ -33,6 +36,7 @@ public class CalculatorActivity extends AppCompatActivity {
     // TextView used to display the output
     @BindView(R.id.txtFormula) TextView txtFormula;
     @BindView(R.id.txtResult) TextView txtResult;
+    @BindView(R.id.btnQr) ImageButton btnQr;
     @BindInt(R.integer.formula_limit) int formulaLimit;
 
     // Represent whether the lastly pressed key is numeric or not
@@ -50,10 +54,64 @@ public class CalculatorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calculator);
         ButterKnife.bind(this);
 
+        // an initial value is passed in, populate it in formula
+        BigDecimal amount = (BigDecimal) getIntent().getSerializableExtra("amount");
+        if (null != amount) {
+            txtFormula.setText(amount.toString());
+            lastNumeric = true;
+            lastEqual = false;
+        }
+
         // Find and set OnClickListener to numeric buttons
         setNumericOnClickListener();
         // Find and set OnClickListener to operator buttons, equal button and decimal point button
         setOperatorOnClickListener();
+        
+        setQrClickListener();
+    }
+
+    private void setQrClickListener() {
+        if (null == getCallingActivity()) {
+            // it is called first as calculator. when click QR button, just start the new QR activity
+
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // pass the amount to QR generator
+                    Intent i = new Intent();
+                    if (!lastEqual) {
+                        onEqual();
+                    }
+                    BigDecimal amount = getCalculationResult();
+                    i.putExtra("amount", amount);
+                    i.setClassName("seta.noip.me.ppcalculator",
+                            "seta.noip.me.ppcalculator.GenerateQrCodeActivity");
+                    startActivity(i);
+                }
+            };
+            btnQr.setOnClickListener(listener);
+        }
+        else {
+            // it is called for calculation result from another activity.
+            // return the final amount and finish
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // pass the amount to QR generator
+                    Intent i = new Intent();
+                    if (!lastEqual) {
+                        onEqual();
+                    }
+                    BigDecimal amount = getCalculationResult();
+                    i.putExtra("amount", amount);
+                    i.setClassName("seta.noip.me.ppcalculator",
+                            "seta.noip.me.ppcalculator.GenerateQrCodeActivity");
+                    setResult(Activity.RESULT_OK, i);
+                    finish();
+                }
+            };
+            btnQr.setOnClickListener(listener);
+        }
     }
 
     /**
@@ -159,21 +217,31 @@ public class CalculatorActivity extends AppCompatActivity {
         // If the current state is error, nothing to do.
         // If the last input was equal, and press again, move from result to formula
         if (lastEqual && !stateError) {
-            NumberFormat nf = NumberFormat.getInstance();
-            BigDecimal ret = BigDecimal.ZERO;
-            if (nf instanceof DecimalFormat) {
-                ((DecimalFormat) nf).setGroupingUsed(true);
-                ((DecimalFormat) nf).setParseBigDecimal(true);
-                try {
-                    ret = (BigDecimal) nf.parse(txtResult.getText().toString());
-                } catch (ParseException e) {
+            if (txtResult.getText().length() == 0) {
+                String txt = txtFormula.getText().toString();
+                try {//99*6.5*66.38
+                    BigDecimal ret = new BigDecimal(txt);
+                    ret = ret.setScale(2, RoundingMode.HALF_UP);
+                    NumberFormat nf = NumberFormat.getInstance();
+                    nf.setGroupingUsed(true);
+                    txtResult.setText(nf.format(ret));
+                    lastDot = true; // Result contains a dot
+                    lastEqual = true;
+                } catch (ArithmeticException ex) {
+                    // Display an error message
+                    txtResult.setText("Error");
                     stateError = true;
-                    // convert to runtime error
-                    throw new RuntimeException(txtResult.getText().toString(), e);
+                    lastNumeric = false;
+                    lastEqual = false;
                 }
+                return;
             }
-            txtFormula.setText(ret.toString());
-            txtResult.setText("");
+            NumberFormat nf = NumberFormat.getInstance();
+            BigDecimal ret = getCalculationResult();
+            if(!ret.toString().equals(txtFormula.getText().toString())) {
+                txtFormula.setText(ret.toString());
+                txtResult.setText("");
+            }
             // treat as numeric input using txtResult
             lastNumeric = true;
             stateError = false;
@@ -204,5 +272,22 @@ public class CalculatorActivity extends AppCompatActivity {
                 lastEqual = false;
             }
         }
+    }
+
+    private BigDecimal getCalculationResult() {
+        NumberFormat nf = NumberFormat.getInstance();
+        BigDecimal ret = BigDecimal.ZERO;
+        if (nf instanceof DecimalFormat) {
+            nf.setGroupingUsed(true);
+            ((DecimalFormat) nf).setParseBigDecimal(true);
+            try {
+                ret = (BigDecimal) nf.parse(txtResult.getText().toString());
+            } catch (ParseException e) {
+                stateError = true;
+                // convert to runtime error
+                throw new RuntimeException(txtResult.getText().toString(), e);
+            }
+        }
+        return ret;
     }
 }
