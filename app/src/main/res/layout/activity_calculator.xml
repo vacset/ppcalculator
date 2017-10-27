@@ -12,10 +12,12 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:gravity="end|center_vertical"
-        android:maxLength="16"
         android:padding="10dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="30sp"
+        android:ellipsize="start"
+        android:singleLine="true"
+        android:textColor="@color/colorFormula"
         android:typeface="serif" />
 
     <TextView
@@ -25,8 +27,9 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/txtFormula"
         android:gravity="end|center_vertical"
-        android:maxLength="16"
         android:padding="10dp"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="40sp"
         android:typeface="serif" />
@@ -77,6 +80,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_operator"
                 android:text="\u00F7"
+                android:tag="/"
                 android:textSize="30sp" />
 
         </LinearLayout>
@@ -120,6 +124,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_operator"
                 android:text="\u00D7"
+                android:tag="*"
                 android:textSize="30sp" />
         </LinearLayout>
 
@@ -162,6 +167,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_operator"
                 android:text="-"
+                android:tag="-"
                 android:textSize="30sp" />
         </LinearLayout>
 
@@ -204,6 +210,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_operator"
                 android:text="+"
+                android:tag="+"
                 android:textSize="30sp" />
         </LinearLayout>
 
